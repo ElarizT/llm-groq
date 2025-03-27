@@ -22,7 +22,7 @@ st.set_page_config(page_title="Elariz's Chatbot", layout="wide")
 st.title("🤖 Elariz's Chatbot")
 
 # Initialize API clients
-groq_api_key = "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"
+groq_api_key = API_KEY
 
 client = Groq(api_key=groq_api_key)
 
