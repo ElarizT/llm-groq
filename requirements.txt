@@ -1,0 +1,8 @@
+streamlit
+groq
+pandas
+PyPDF2
+duckduckgo-search
+SpeechRecognition
+gTTS
+pyaudio
