@@ -11,18 +11,16 @@ import io
 from duckduckgo_search import DDGS
 import json
 from datetime import datetime
-# Add speech recognition and text-to-speech libraries
-import speech_recognition as sr
+# Text-to-speech library (no PyAudio dependency)
 from gtts import gTTS
 import base64
-import time
 
 # Set up Streamlit app
 st.set_page_config(page_title="Elariz's Chatbot", layout="wide")
 st.title("🤖 Elariz's Chatbot")
 
 # Initialize API clients
-groq_api_key = API_KEY
+groq_api_key = "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"
 
 client = Groq(api_key=groq_api_key)
 
@@ -37,40 +35,6 @@ if "use_web_search" not in st.session_state:
     st.session_state.use_web_search = False
 if "voice_mode" not in st.session_state:
     st.session_state.voice_mode = False
-if "recording" not in st.session_state:
-    st.session_state.recording = False
-if "microphone_available" not in st.session_state:
-    # Check if microphone is available
-    try:
-        # Just test if we can initialize a microphone
-        with sr.Microphone() as source:
-            pass
-        st.session_state.microphone_available = True
-    except (ImportError, OSError, AttributeError):
-        st.session_state.microphone_available = False
-
-# Function to convert speech to text
-def speech_to_text():
-    if not st.session_state.microphone_available:
-        return "Microphone access is not available in this environment."
-    
-    try:
-        r = sr.Recognizer()
-        with sr.Microphone() as source:
-            st.info("Listening... Speak now")
-            r.adjust_for_ambient_noise(source)
-            audio = r.listen(source, timeout=5)
-            st.info("Processing speech...")
-        
-        try:
-            text = r.recognize_google(audio)
-            return text
-        except sr.UnknownValueError:
-            return "Sorry, I couldn't understand your speech."
-        except sr.RequestError:
-            return "Sorry, speech recognition service is unavailable."
-    except Exception as e:
-        return f"Speech recognition error: {str(e)}"
 
 # Function to convert text to speech and play it
 def text_to_speech(text):
@@ -140,12 +104,10 @@ with st.sidebar:
     # Web search toggle
     st.session_state.use_web_search = st.toggle("Enable Web Search", st.session_state.use_web_search)
     
-    # Voice mode toggle (only show if microphone is available)
-    if st.session_state.microphone_available:
-        st.session_state.voice_mode = st.toggle("Enable Voice Mode", st.session_state.voice_mode)
-    else:
-        st.warning("⚠️ Microphone access not available in this environment. Voice mode disabled.")
-        st.session_state.voice_mode = False
+    # Voice output mode toggle (Text-to-Speech for AI responses)
+    st.session_state.voice_mode = st.toggle("Enable Voice Output", st.session_state.voice_mode)
+    if st.session_state.voice_mode:
+        st.info("🔊 AI responses will be spoken aloud")
     
     st.header("Upload File")
     uploaded_file = st.file_uploader("Choose a file", type=["txt", "csv", "pdf", "py", "js", "html", "css", "json", "md"])
@@ -213,22 +175,8 @@ for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# Voice input button (shown only when voice mode is enabled)
-user_input = None
-if st.session_state.voice_mode and st.session_state.microphone_available:
-    col1, col2 = st.columns([1, 3])
-    with col1:
-        if st.button("🎤 Speak"):
-            user_input = speech_to_text()
-            if user_input and user_input != "Microphone access is not available in this environment.":
-                st.info(f"You said: {user_input}")
-    with col2:
-        text_input = st.chat_input("Or type your message here...")
-        if text_input:
-            user_input = text_input
-else:
-    # Regular text input
-    user_input = st.chat_input("Ask me anything...")
+# Text input for user messages (no voice input since it won't work in cloud)
+user_input = st.chat_input("Ask me anything...")
 
 if user_input:
     # Add user message to chat history
