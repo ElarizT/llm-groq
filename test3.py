@@ -175,7 +175,7 @@ for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# Text input for user messages (no voice input since it won't work in cloud)
+# Text input for user messages
 user_input = st.chat_input("Ask me anything...")
 
 if user_input:
