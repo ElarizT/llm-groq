@@ -7,11 +7,11 @@ from io import StringIO
 # Add PyPDF2 for PDF text extraction
 import PyPDF2
 import io
-# Replace Tavily with DuckDuckGo search
+# Use DuckDuckGo search
 from duckduckgo_search import DDGS
 import json
 from datetime import datetime
-# Text-to-speech library (no PyAudio dependency)
+# Text-to-speech library
 from gtts import gTTS
 import base64
 
